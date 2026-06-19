@@ -1,0 +1,131 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap');
+
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: #f0f0f0;
+    margin: 0;
+    padding: 20px;
+}
+
+.btn-print {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.a4-page {
+    width: 210mm;
+    min-height: 297mm;
+    padding: 20mm;
+    margin: 0 auto;
+    border: 1px #D3D3D3 solid;
+    border-radius: 5px;
+    background: white;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+}
+
+h1.ws-title {
+    text-align: center;
+    border-bottom: 2px solid #000;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.ws-info-box {
+    text-align: right;
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+.ws-story {
+    background: #fdfdfd;
+    border: 1px solid #ccc;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    line-height: 1.8;
+}
+
+.ws-story strong {
+    background-color: #e6f7ff;
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+
+/* Print Crossword Table */
+.cw-print-table {
+    border-collapse: collapse;
+    margin: 20px auto;
+}
+
+.cw-print-table td {
+    width: 45px;
+    height: 45px;
+    border: 2px solid #000;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 24px;
+    font-weight: bold;
+    position: relative;
+}
+
+.cw-print-table td.cw-empty {
+    border: none;
+    background: transparent;
+}
+
+.cw-print-num {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    font-size: 12px;
+    font-weight: normal;
+    color: #333;
+}
+
+.cw-print-clues {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.cw-print-clues-section {
+    flex: 1;
+}
+
+.cw-print-clues-section h3 {
+    border-bottom: 1px solid #000;
+    padding-bottom: 5px;
+}
+
+.cw-print-clues-section ol {
+    padding-left: 20px;
+    line-height: 1.6;
+}
+
+@media print {
+    body {
+        background: white;
+        margin: 0;
+        padding: 0;
+    }
+    .a4-page {
+        margin: 0;
+        border: initial;
+        border-radius: initial;
+        width: initial;
+        min-height: initial;
+        box-shadow: initial;
+        background: initial;
+        page-break-after: always;
+    }
+    .no-print {
+        display: none !important;
+    }
+}

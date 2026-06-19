@@ -153,113 +153,151 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
             
-            let html = '<div class="crossword-wrapper">';
-            html += '<table class="crossword-board">';
+            let html = '';
             
-            // Map inputs for answers
-            let inputMap = {}; 
-
-            for (let r = minR; r <= maxR; r++) {
-                html += '<tr>';
-                for (let c = minC; c <= maxC; c++) {
-                    let cell = generator.grid[r][c];
-                    if (cell) {
-                        let numberHtml = '';
-                        let cellWords = placedWords.filter(w => w.r === r && w.c === c);
-                        if (cellWords.length > 0) {
-                            // find minimum number
-                            let num = Math.min(...cellWords.map(w => w.number));
-                            numberHtml = `<span class="cw-num">${num}</span>`;
+            if (window.isPrintMode) {
+                html += '<table class="cw-print-table">';
+                for (let r = minR; r <= maxR; r++) {
+                    html += '<tr>';
+                    for (let c = minC; c <= maxC; c++) {
+                        let cell = generator.grid[r][c];
+                        if (cell) {
+                            let numberHtml = '';
+                            let cellWords = placedWords.filter(w => w.r === r && w.c === c);
+                            if (cellWords.length > 0) {
+                                let num = Math.min(...cellWords.map(w => w.number));
+                                numberHtml = `<span class="cw-print-num">${num}</span>`;
+                            }
+                            let textContent = window.isAnswerKey ? cell : "";
+                            html += `<td>${numberHtml}${textContent}</td>`;
+                        } else {
+                            html += `<td class="cw-empty"></td>`;
                         }
-                        
-                        html += `<td class="cw-cell cw-active">
-                                    ${numberHtml}
-                                    <input type="text" maxlength="1" data-r="${r}" data-c="${c}" class="cw-input" />
-                                 </td>`;
-                        inputMap[`${r},${c}`] = cell;
-                    } else {
-                        html += `<td class="cw-cell cw-empty"></td>`;
                     }
+                    html += '</tr>';
                 }
-                html += '</tr>';
-            }
-            html += '</table>';
-            
-            // Clues
-            html += '<div class="cw-clues">';
-            let across = placedWords.filter(w => w.isAcross).sort((a,b) => a.number - b.number);
-            let down = placedWords.filter(w => !w.isAcross).sort((a,b) => a.number - b.number);
-            
-            html += '<div class="cw-clues-section"><h3>가로 열쇠</h3><ol>';
-            across.forEach(w => {
-                html += `<li><strong>${w.number}.</strong> ${w.clue} <span class="cw-len">(${w.word.length}글자)</span></li>`;
-            });
-            html += '</ol></div>';
-            
-            html += '<div class="cw-clues-section"><h3>세로 열쇠</h3><ol>';
-            down.forEach(w => {
-                html += `<li><strong>${w.number}.</strong> ${w.clue} <span class="cw-len">(${w.word.length}글자)</span></li>`;
-            });
-            html += '</ol></div>';
-            html += '</div>'; // end clues
-            
-            html += '<div class="cw-actions">';
-            html += '<button id="btn-check" class="cw-btn">정답 확인하기</button>';
-            html += '<button id="btn-new" class="cw-btn cw-btn-secondary">새로운 퍼즐 만들기 (다른 10문제)</button>';
-            html += '<div id="cw-result" class="cw-result"></div>';
-            html += '</div>';
+                html += '</table>';
+                
+                html += '<div class="cw-print-clues">';
+                let across = placedWords.filter(w => w.isAcross).sort((a,b) => a.number - b.number);
+                let down = placedWords.filter(w => !w.isAcross).sort((a,b) => a.number - b.number);
+                
+                html += '<div class="cw-print-clues-section"><h3>가로 열쇠</h3><ol>';
+                across.forEach(w => { html += `<li><strong>${w.number}.</strong> ${w.clue}</li>`; });
+                html += '</ol></div>';
+                
+                html += '<div class="cw-print-clues-section"><h3>세로 열쇠</h3><ol>';
+                down.forEach(w => { html += `<li><strong>${w.number}.</strong> ${w.clue}</li>`; });
+                html += '</ol></div>';
+                html += '</div>';
+            } else {
+                html += '<div class="crossword-wrapper">';
+                html += '<table class="crossword-board">';
+                
+                // Map inputs for answers
+                let inputMap = {}; 
 
-            html += '</div>'; // end wrapper
+                for (let r = minR; r <= maxR; r++) {
+                    html += '<tr>';
+                    for (let c = minC; c <= maxC; c++) {
+                        let cell = generator.grid[r][c];
+                        if (cell) {
+                            let numberHtml = '';
+                            let cellWords = placedWords.filter(w => w.r === r && w.c === c);
+                            if (cellWords.length > 0) {
+                                let num = Math.min(...cellWords.map(w => w.number));
+                                numberHtml = `<span class="cw-num">${num}</span>`;
+                            }
+                            
+                            html += `<td class="cw-cell cw-active">
+                                        ${numberHtml}
+                                        <input type="text" maxlength="1" data-r="${r}" data-c="${c}" class="cw-input" />
+                                     </td>`;
+                            inputMap[`${r},${c}`] = cell;
+                        } else {
+                            html += `<td class="cw-cell cw-empty"></td>`;
+                        }
+                    }
+                    html += '</tr>';
+                }
+                html += '</table>';
+                
+                // Clues
+                html += '<div class="cw-clues">';
+                let across = placedWords.filter(w => w.isAcross).sort((a,b) => a.number - b.number);
+                let down = placedWords.filter(w => !w.isAcross).sort((a,b) => a.number - b.number);
+                
+                html += '<div class="cw-clues-section"><h3>가로 열쇠</h3><ol>';
+                across.forEach(w => {
+                    html += `<li><strong>${w.number}.</strong> ${w.clue} <span class="cw-len">(${w.word.length}글자)</span></li>`;
+                });
+                html += '</ol></div>';
+                
+                html += '<div class="cw-clues-section"><h3>세로 열쇠</h3><ol>';
+                down.forEach(w => {
+                    html += `<li><strong>${w.number}.</strong> ${w.clue} <span class="cw-len">(${w.word.length}글자)</span></li>`;
+                });
+                html += '</ol></div>';
+                html += '</div>'; // end clues
+                
+                html += '<div class="cw-actions">';
+                html += '<button id="btn-check" class="cw-btn">정답 확인하기</button>';
+                html += '<button id="btn-new" class="cw-btn cw-btn-secondary">새로운 퍼즐 만들기 (다른 10문제)</button>';
+                html += '<div id="cw-result" class="cw-result"></div>';
+                html += '</div>';
+
+                html += '</div>'; // end wrapper
+            }
             
             app.innerHTML = html;
             
-            // Attach Events
-            document.getElementById('btn-check').addEventListener('click', () => {
-                let correctCount = 0;
-                let totalCount = Object.keys(inputMap).length;
-                let inputs = document.querySelectorAll('.cw-input');
-                inputs.forEach(inp => {
-                    let r = inp.getAttribute('data-r');
-                    let c = inp.getAttribute('data-c');
-                    let ans = inputMap[`${r},${c}`];
+            if (!window.isPrintMode) {
+                // Attach Events
+                document.getElementById('btn-check').addEventListener('click', () => {
+                    let correctCount = 0;
+                    let totalCount = Object.keys(inputMap).length;
+                    let inputs = document.querySelectorAll('.cw-input');
+                    inputs.forEach(inp => {
+                        let r = inp.getAttribute('data-r');
+                        let c = inp.getAttribute('data-c');
+                        let ans = inputMap[`${r},${c}`];
+                        
+                        if (inp.value.trim() === ans) {
+                            inp.classList.add('cw-correct');
+                            inp.classList.remove('cw-wrong');
+                            correctCount++;
+                        } else if (inp.value.trim() !== "") {
+                            inp.classList.add('cw-wrong');
+                            inp.classList.remove('cw-correct');
+                        } else {
+                            inp.classList.remove('cw-correct', 'cw-wrong');
+                        }
+                    });
                     
-                    // Allow simple Hangul composition check
-                    if (inp.value.trim() === ans) {
-                        inp.classList.add('cw-correct');
-                        inp.classList.remove('cw-wrong');
-                        correctCount++;
-                    } else if (inp.value.trim() !== "") {
-                        inp.classList.add('cw-wrong');
-                        inp.classList.remove('cw-correct');
+                    let resDiv = document.getElementById('cw-result');
+                    if (correctCount === totalCount) {
+                        resDiv.innerHTML = "🎉 와! 모든 낱말을 다 맞혔어요! 대단합니다! 🎉";
+                        resDiv.style.color = "#28a745";
                     } else {
-                        inp.classList.remove('cw-correct', 'cw-wrong');
+                        resDiv.innerHTML = `아직 조금 부족해요! (현재 맞은 글자 수: ${correctCount}/${totalCount})`;
+                        resDiv.style.color = "#dc3545";
                     }
                 });
-                
-                let resDiv = document.getElementById('cw-result');
-                if (correctCount === totalCount) {
-                    resDiv.innerHTML = "🎉 와! 모든 낱말을 다 맞혔어요! 대단합니다! 🎉";
-                    resDiv.style.color = "#28a745";
-                } else {
-                    resDiv.innerHTML = `아직 조금 부족해요! (현재 맞은 글자 수: ${correctCount}/${totalCount})`;
-                    resDiv.style.color = "#dc3545";
-                }
-            });
 
-            document.getElementById('btn-new').addEventListener('click', () => {
-                renderCrossword();
-            });
-
-            // Focus management
-            let allInputs = document.querySelectorAll('.cw-input');
-            allInputs.forEach((inp, idx) => {
-                inp.addEventListener('input', function() {
-                    if (this.value.length === 1 && idx < allInputs.length - 1) {
-                        // Not perfect, but moves to next input
-                        allInputs[idx + 1].focus();
-                    }
+                document.getElementById('btn-new').addEventListener('click', () => {
+                    renderCrossword();
                 });
-            });
+
+                let allInputs = document.querySelectorAll('.cw-input');
+                allInputs.forEach((inp, idx) => {
+                    inp.addEventListener('input', function() {
+                        if (this.value.length === 1 && idx < allInputs.length - 1) {
+                            allInputs[idx + 1].focus();
+                        }
+                    });
+                });
+            }
+            
 
         }, 100);
     }
